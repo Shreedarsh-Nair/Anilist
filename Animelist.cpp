@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <random>
 #include <ctime>
 #include <set>
 
@@ -32,10 +33,13 @@ int main(){
 
 	ifile.close();
 
+	std::cout << std::endl;
+	std::cout << "There are currently " << a_list.size() << " Animes in your list\n\n";
 	std::cout << "0 : Add anime\n";
 	std::cout << "1 : Delete anime\n";
 	std::cout << "2 : Display list\n";
-	std::cout << "3 : Quit\n";
+	std::cout << "3 : Random anime\n";
+	std::cout << "4 : Quit\n";
 	
 	while(1){
 		std::cout << "Enter your choice: ";
@@ -47,10 +51,9 @@ int main(){
 				std::cin >> std::ws;
 				std::getline(std::cin, name);
 				a_list.insert(name);
+				std::cout << "\nAnime inserted successfully\n\n";
 
-				if(write_file(a_list)){
-					std::cout << "Error in writing to file." << std::endl;
-				}	
+				write_file(a_list);	
 
 				break;
 
@@ -59,10 +62,9 @@ int main(){
 				std::cin >> std::ws;
 				std::getline(std::cin, name);
 				a_list.erase(name);
+				std::cout << "\nAnime removed successfully\n\n";
 
-				if(write_file(a_list)){
-					std::cout << "Error in writing to file." << std::endl;
-				}
+				write_file(a_list);
 
 				break;
 
@@ -70,19 +72,38 @@ int main(){
 			{
 				int i = 1;
 				
+				std::cout << std::endl;
 				for(std::string anime : a_list){
 					std::cout << i << ". "  << anime << std::endl;
 					i++;
 				}
+				std::cout << std::endl;
 			}
 			
 				break;
-			
+
 			case 3:
+			{
+				if(a_list.empty()){
+					std::cout << "\nNo anime found in list.\n\n";
+					break;
+				}
+
+				std::random_device seed;
+				std::mt19937 gen(seed());
+				std::uniform_int_distribution<int> num(1, a_list.size());
+
+				std::cout << std::endl;
+				std::cout << "Watch " << "\"" << *std::next(a_list.begin(), num(gen)) << "\"" << "\n\n";
+		
+				break;
+			}
+
+			case 4:
 				return 0;
 		
 			default:
-				std::cout << "Invalid option. Please try again!";
+				std::cout << "Invalid option. Please try again!\n";
 				break;
 		}
 	}
